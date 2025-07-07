@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Simulation AI - Mock Interview Practice</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#007AFF">
+    <link rel="icon" sizes="192x192" href="icon-192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1><i class="fas fa-user-tie"></i> Interview Simulation AI</h1>
+                <div class="header-controls">
+                    <div class="resume-upload-section">
+                        <input type="file" id="resume-upload" accept=".pdf" style="display: none;">
+                        <button id="upload-resume-btn" class="upload-btn">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>Upload Resume</span>
+                        </button>
+                        <div id="resume-status" class="resume-status" style="display: none;">
+                            <i class="fas fa-check-circle"></i>
+                            <span id="resume-filename">Resume loaded</span>
+                            <button id="remove-resume-btn" class="remove-btn">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="job-description-section">
+                        <button id="toggle-jd-btn" class="upload-btn">
+                            <i class="fas fa-briefcase"></i>
+                            <span>Add Job Description</span>
+                        </button>
+                        <div id="jd-input-container" class="jd-input-container" style="display: none;">
+                            <div class="jd-input-header">
+                                <span><i class="fas fa-briefcase"></i> Job Description</span>
+                                <button id="close-jd-btn" class="close-btn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <textarea 
+                                id="job-description-input" 
+                                placeholder="Paste the job description here...&#10;&#10;This will help me tailor my responses to match the specific role requirements."
+                                rows="8"
+                            ></textarea>
+                            <div class="jd-input-actions">
+                                <button id="save-jd-btn" class="action-btn primary">
+                                    <i class="fas fa-save"></i> Save JD
+                                </button>
+                                <button id="clear-jd-btn" class="action-btn secondary">
+                                    <i class="fas fa-trash"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+                        <div id="jd-status" class="jd-status" style="display: none;">
+                            <i class="fas fa-check-circle"></i>
+                            <span id="jd-preview">Job description added</span>
+                            <button id="edit-jd-btn" class="edit-btn">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button id="remove-jd-btn" class="remove-btn">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="api-key-input">
+                        <input 
+                            type="password" 
+                            id="gemini-key" 
+                            placeholder="Enter Gemini API key..."
+                            autocomplete="off"
+                        >
+                        <button type="button" id="toggle-key-visibility" class="toggle-btn">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- Left Column: Conversation -->
+            <section class="conversation-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-comments"></i> Conversation</h2>
+                    <button id="clear-chat" class="action-btn secondary">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                </div>
+                <div class="nav-controls">
+                    <button id="prev-btn" class="nav-btn" title="Previous">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button id="next-btn" class="nav-btn" title="Next">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div id="chat-container" class="chat-area">
+                    <div class="welcome-message">
+                        <div class="ai-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <p>🎉 <strong>Interview Simulation AI Assistant</strong></p>
+                            <p>Enter your API key above, then upload your resume for interview practice!</p>
+                            <p><small>💡 Once uploaded, I'll role-play as you during mock interviews</small></p>
+                        </div>
+                    </div>
+                </div>
+                <div id="typing-indicator" class="typing-indicator" style="display: none;">
+                    <div class="ai-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="typing-animation">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Column: Voice Controls -->
+            <section class="voice-panel">
+                <!-- Voice Controls -->
+                <div class="voice-controls-section">
+                    <div class="voice-status">
+                        <span id="status-text">Enter your API key to start</span>
+                        <div id="audio-visualizer" class="audio-visualizer">
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                        </div>
+                    </div>
+                    
+                    <button id="mic-button" class="mic-button" disabled>
+                        <i class="fas fa-microphone"></i>
+                        <span class="mic-text">Click to speak</span>
+                    </button>
+                    
+                    <div class="voice-settings">
+                        <label for="voice-select">🎤 Voice:</label>
+                        <select id="voice-select" class="voice-select">
+                            <optgroup label="🇺🇸 US English">
+                                <option value="en-US-Neural2-J">Neural2-J (Female)</option>
+                                <option value="en-US-Neural2-I">Neural2-I (Male)</option>
+                                <option value="en-US-Neural2-H">Neural2-H (Female)</option>
+                                <option value="en-US-Neural2-G">Neural2-G (Female)</option>
+                                <option value="en-US-Neural2-F">Neural2-F (Male)</option>
+                                <option value="en-US-Neural2-E">Neural2-E (Female)</option>
+                                <option value="en-US-Neural2-D">Neural2-D (Male)</option>
+                                <option value="en-US-Neural2-C">Neural2-C (Female)</option>
+                                <option value="en-US-Neural2-A">Neural2-A (Male)</option>
+                                <option value="en-US-Wavenet-J">Wavenet-J (Female)</option>
+                                <option value="en-US-Wavenet-I">Wavenet-I (Male)</option>
+                                <option value="en-US-Wavenet-H">Wavenet-H (Female)</option>
+                                <option value="en-US-Wavenet-G">Wavenet-G (Female)</option>
+                                <option value="en-US-Wavenet-F">Wavenet-F (Male)</option>
+                                <option value="en-US-Wavenet-E">Wavenet-E (Female)</option>
+                                <option value="en-US-Wavenet-D">Wavenet-D (Male)</option>
+                                <option value="en-US-Wavenet-C">Wavenet-C (Female)</option>
+                                <option value="en-US-Wavenet-A">Wavenet-A (Male)</option>
+                            </optgroup>
+                            <optgroup label="🇮🇳 Indian English">
+                                <option value="en-IN-Neural2-A">Neural2-A (Male)</option>
+                                <option value="en-IN-Neural2-B" selected>Neural2-B (Female)</option>
+                                <option value="en-IN-Neural2-C">Neural2-C (Male)</option>
+                                <option value="en-IN-Neural2-D">Neural2-D (Female)</option>
+                                <option value="en-IN-Wavenet-A">Wavenet-A (Female)</option>
+                                <option value="en-IN-Wavenet-B">Wavenet-B (Male)</option>
+                                <option value="en-IN-Wavenet-C">Wavenet-C (Male)</option>
+                                <option value="en-IN-Wavenet-D">Wavenet-D (Female)</option>
+                            </optgroup>
+                            <optgroup label="🔄 Fallback">
+                                <option value="browser">Browser TTS</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <!-- Live TTS Controls -->
+                    <div class="live-tts-controls">
+                        <div class="tts-toggle">
+                            <label for="live-tts-toggle">🔊 Live Speaking:</label>
+                            <input type="checkbox" id="live-tts-toggle" checked>
+                            <span class="toggle-slider"></span>
+                        </div>
+                        
+                        <div class="tts-control-panel">
+                            <button id="tts-play-pause" class="tts-control-btn" title="Play/Pause">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button id="tts-stop" class="tts-control-btn" title="Stop">
+                                <i class="fas fa-stop"></i>
+                            </button>
+                            <button id="tts-skip" class="tts-control-btn" title="Skip to End">
+                                <i class="fas fa-forward"></i>
+                            </button>
+                        </div>
+
+                        <div class="tts-speed-control">
+                            <label for="tts-speed">⚡ Speed:</label>
+                            <input type="range" id="tts-speed" min="0.5" max="2.0" step="0.1" value="0.9">
+                            <span id="tts-speed-value">0.9x</span>
+                        </div>
+                    </div>
+                    
+                    <div class="shortcuts-info">
+                        <small>
+                            <kbd>Space</kbd> toggle • <kbd>R</kbd> restart • <kbd>Esc</kbd> stop/speak
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Live Transcription -->
+                <div class="transcription-section">
+                    <h3><i class="fas fa-closed-captioning"></i> Live Transcription</h3>
+                    <div id="live-transcript" class="transcript-area">
+                        Your speech will appear here in real-time...
+                    </div>
+                </div>
+
+                <!-- Text Input -->
+                <div class="text-input-section">
+                    <div class="input-row">
+                        <input 
+                            type="text" 
+                            id="text-input" 
+                            placeholder="Or type your question here..."
+                            disabled
+                        >
+                        <button id="send-button" class="action-btn primary" disabled>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Error Toast -->
+    <div id="error-toast" class="error-toast" style="display: none;">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span id="error-message"></span>
+        <button id="close-error" class="close-btn">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- PDF Upload Loading -->
+    <div id="pdf-loading" class="pdf-loading" style="display: none;">
+        <div class="loading-content">
+            <i class="fas fa-file-pdf fa-spin"></i>
+            <p>Processing your resume...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('service-worker.js');
+        });
+      }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,44 @@
+ {
+  "name": "live-voice-ai-assistant",
+  "version": "1.0.0",
+  "description": "A modern web application for real-time voice conversations with Google's Gemini Flash AI",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server -p 8000 -c-1",
+    "dev": "npx http-server -p 3000 -c-1 -o",
+    "build": "echo 'No build step required for this static app'",
+    "serve": "python -m http.server 8000",
+    "deploy": "echo 'Ready for deployment to static hosting platforms'"
+  },
+  "keywords": [
+    "voice-ai",
+    "speech-recognition",
+    "gemini",
+    "ai-assistant",
+    "real-time",
+    "javascript",
+    "web-app",
+    "google-ai"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/live-voice-ai-assistant.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/live-voice-ai-assistant/issues"
+  },
+  "homepage": "https://github.com/yourusername/live-voice-ai-assistant#readme",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+} 
